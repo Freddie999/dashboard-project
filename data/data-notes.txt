@@ -1,0 +1,62 @@
+Data source: Fika Safe Access Scorecard
+Application: https://fikadigital.org/saipoc
+Original archive:
+https://public-b2p-geodata.s3.us-east-1.amazonaws.com/general-pmtiles/all_countries_merged_hex8.pmtiles
+Research context:
+https://public-b2p-geodata.s3.us-east-1.amazonaws.com/research/AGU_2025_poster.pdf
+
+Preparation date: 2026-10-17 America/New_York
+Source file Last-Modified: 2025-04-03 (not an observation date).
+
+The country_name == 'rwa' source records were extracted from all 236 source
+tiles and deduplicated by h3_index. Result: 24,547 unique cells, no conflicting
+duplicate properties. Full resolution-8 H3 boundaries were reconstructed
+from identifiers. They have not been clipped to a national border.
+
+The 18 selected source attributes retain their original names and values.
+Numeric strings were converted to numbers. Nothing was imputed. Zero travel
+times remain zero. Tippecanoe v2.79.0 packaged the shapes at tile zooms 6-10,
+without feature dropping, tiny-polygon reduction, or line simplification.
+Tile coordinates are quantized and clipped/buffered as required for display.
+All 24,547 cells are represented at each zoom. The cell geometry is H3
+resolution 8 at every zoom, not a coarser analytical grid.
+
+FIELDS
+h3_index: cell identifier (string); use as the feature key.
+country_name: source country code, rwa.
+population: source population attribute.
+pop_0_4: source age 0-4 population attribute.
+females_15_49: source female age 15-49 population attribute.
+rwi: Relative Wealth Index; not a monetary income measure.
+
+For each destination all_health, health_centers, health_posts, major_hospitals:
+travel_time_<destination>: source modelled walking-time field, minutes.
+travel_time_no_sites_<destination>: alternate source scenario, minutes.
+time_delta_no_sites_<destination>: source scenario time difference, minutes.
+
+INTERPRETATION
+The exact scenario definitions have NOT been confirmed. Do not relabel them
+as present/future, with/without bridges, or observed benefits. Supplied deltas
+match no_sites minus the other scenario within one minute for all Rwanda
+cells and four healthcare categories, consistent with rounding.
+
+all_health equals health_centers for every cell in both scenarios and deltas.
+In many cells, health_posts times are lower than all_health, so all_health
+cannot safely be described as the minimum across all supplied categories.
+Prefer explicit health-centre/post/hospital labels until clarified.
+
+Zero travel times occur in 14 all_health/health_centers cells, 18 health_posts
+cells, and 30 major_hospitals cells, in both scenarios. Fika displays these
+as No data. Keep separate from positive-time classes and do not claim they
+represent immediate access. Their underlying meaning remains uncertain.
+Zero DELTAS may legitimately indicate no difference and are not treated as
+missing by this preparation.
+
+Source population, demographic dates, facility provenance, spatial coverage,
+and within-cell aggregation are not fully documented. Do not claim national
+population coverage or within-cell uniform access based solely on this file.
+No time series, facility names/locations, or route geometries are included.
+
+Source reuse licence: not established. Public availability alone does not
+confirm redistribution terms. This bundle is locally prepared; nothing was
+published by this preparation step.

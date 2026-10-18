@@ -1,1 +1,3 @@
-Add a readme for your dashboard here. Include content overview, data citations, and any relevant technical details.
+The users I want to empower are health planners and community-health organisations investigating geographic barriers to healthcare in Rwanda.
+The specific decisions those users need to make are which areas to shortlist for further investigation when planning outreach or evaluating healthcare-access gaps.
+The data required to inform these decisions is modelled walking time to different healthcare facility categories, population estimates, and geographic locations of the areas being compared.

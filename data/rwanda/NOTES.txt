@@ -1,0 +1,67 @@
+Rwanda healthcare accessibility extraction
+
+Source: ../all_countries_merged_hex8.pmtiles (Fika public archive)
+Source URL: https://public-b2p-geodata.s3.us-east-1.amazonaws.com/general-pmtiles/all_countries_merged_hex8.pmtiles
+Extraction date: 2026-10-17 America/New_York
+
+FILES
+publish/: prepared GitHub Pages data bundle (PMTiles and companion table).
+pmtiles-validation.json: complete per-zoom archive validation.
+rwanda-healthcare-hex8.geojson: 24,547 unique H3 resolution-8 cells;
+18 attributes for healthcare and population. WGS84 longitude/latitude.
+rwanda-healthcare-hex8.geojson.gz: compressed copy of the same GeoJSON.
+rwanda-hex8-attributes.csv: all 57 source attributes, numeric strings converted.
+rwanda-hex8-source-properties.jsonl.gz: deduplicated source properties with
+original JSON value types preserved.
+quality-profile.json: machine-readable checks and provenance.
+inspection.ipynb: executed, inspectable checks and rerun instructions.
+../extract_rwanda.py: complete reproducible extraction and profiling code.
+
+METHOD
+All 236 tiles were scanned. Filter: country_name == 'rwa'.
+26,693 matching tile features collapsed to 24,547 unique h3_index values.
+2,146 repeated copies removed; zero conflicting attribute copies.
+Full hexagon boundaries regenerated from H3 IDs to avoid tile clipping and
+quantization. They are NOT clipped to a national boundary. Inclusion follows
+Fika's country label, not a new boundary intersection. No missing areas filled.
+
+FINDINGS
+No absent/blank fields or unparseable numeric values in the Rwanda records.
+No negative healthcare travel times.
+Zero travel times occur in 14 cells for health centres/all_health, 18 for
+health posts, and 30 for major hospitals (in both scenarios). Zeros are
+preserved. Fika's frontend displays these as No data; this is not proof that
+zero cannot represent rounding or a location at a destination. Exclude them
+from a positive-travel-time analysis and report their population separately.
+
+HIGH: all_health is identical to health_centers in every one of the 24,547
+cells, for both travel-time scenarios and the delta field. Health-post times
+are actually shorter than all_health in 11,180 positive pairs in travel_time_
+and 11,155 in travel_time_no_sites_. Therefore do not label all_health as the
+minimum across all facility categories. The underlying classification could
+be intentional or a source-generation issue; metadata cannot establish why.
+Use explicit source category names, pending clarification.
+
+The supplied delta agrees with no_sites minus the other scenario within one
+minute for all four healthcare categories and every cell. This is consistent
+with rounding, but does not establish the scenario definitions. Do not label
+the scenarios current/future, with/without bridges, or realised benefits yet.
+
+The population attribute sums to 13,439,117 over the extracted cells. This is
+an inventory check, NOT a validated population estimate for Rwanda. Spatial
+coverage, reference date, and within-cell population allocation remain unknown.
+
+No dated observations are provided, so no trend analysis is supported.
+The source server reported Last-Modified 2025-04-03; that timestamp does not
+establish the observation year. Source facility provenance, reuse licence,
+scenario definitions, and travel-time aggregation method remain unresolved.
+
+SUITABILITY
+Prepared for exploratory mapping and prototype controls. Population coverage
+claims and scenario comparisons need the remaining definitions resolved.
+For a first prototype, show explicit health-centre/post/hospital categories,
+identify the source scenario, and treat zero travel times as uncertain.
+
+RERUN
+From fika-data: uv run extract_rwanda.py
+Libraries are pinned in the script. Original archive remains unchanged.
