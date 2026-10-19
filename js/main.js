@@ -1,52 +1,69 @@
-// These buttons only control the layout. Map and data loading come next.
 const panelButtons = document.querySelectorAll('[data-panel]');
 const panels = document.querySelectorAll('.floating-panel');
+const closeButtons = document.querySelectorAll('.close-panel');
+
+console.log('Navigation buttons:', panelButtons);
+console.log('Panels:', panels);
 
 function closePanels() {
-  panels.forEach((panel) => {
+  for (const panel of panels) {
     panel.hidden = true;
-  });
-  panelButtons.forEach((button) => {
+  } 
+
+  for (const button of panelButtons) {
     button.setAttribute('aria-expanded', 'false');
-  });
+  }
 }
+
+// closePanels();
 
 function openPanel(button) {
   closePanels();
-  const panel = document.getElementById(button.dataset.panel);
+
+  const panelId = button.dataset.panel;
+  const panel = document.getElementById(panelId);
+
   panel.hidden = false;
   button.setAttribute('aria-expanded', 'true');
   panel.querySelector('h2').focus();
+
 }
 
-panelButtons.forEach((button) => {
+
+//close an active panel
+
+function closeActivePanel() {
+  const activeButton = document.querySelector('[data-panel][aria-expanded="true"]',
+  );
+  closePanels();
+
+  if (activeButton) {
+    activeButton.focus();
+  }
+}
+
+
+for (const button of closeButtons) {
+  button.addEventListener('click', closeActivePanel);
+}
+
+for (const button of panelButtons) {
   button.addEventListener('click', () => {
     const isOpen = button.getAttribute('aria-expanded') === 'true';
-    closePanels();
-    if (!isOpen) openPanel(button);
-  });
-});
 
-function closePanelAndReturnFocus(panel) {
-  const trigger = document.querySelector(`[data-panel="${panel.id}"]`);
-  closePanels();
-  trigger.focus();
+    if (isOpen) {
+      closePanels();
+    } else {
+      openPanel(button);
+    }
+  });
 }
 
-panels.forEach((panel) => {
-  panel.querySelector('.close-panel').addEventListener('click', () => {
-    closePanelAndReturnFocus(panel);
-  });
-});
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
-    const visiblePanel = document.querySelector('.floating-panel:not([hidden])');
-    if (visiblePanel) closePanelAndReturnFocus(visiblePanel);
+    closeActivePanel();
   }
 });
 
-document.querySelector('.skip-link').addEventListener('click', (event) => {
-  event.preventDefault();
-  openPanel(document.querySelector('[data-panel="explore-panel"]'));
-});
+
