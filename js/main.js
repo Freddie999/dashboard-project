@@ -8,7 +8,7 @@ console.log('Panels:', panels);
 function closePanels() {
   for (const panel of panels) {
     panel.hidden = true;
-  } 
+  }
 
   for (const button of panelButtons) {
     button.setAttribute('aria-expanded', 'false');
@@ -26,11 +26,9 @@ function openPanel(button) {
   panel.hidden = false;
   button.setAttribute('aria-expanded', 'true');
   panel.querySelector('h2').focus();
-
 }
 
-
-//close an active panel
+// close an active panel
 
 function closeActivePanel() {
   const activeButton = document.querySelector('[data-panel][aria-expanded="true"]',
@@ -41,7 +39,6 @@ function closeActivePanel() {
     activeButton.focus();
   }
 }
-
 
 for (const button of closeButtons) {
   button.addEventListener('click', closeActivePanel);
@@ -59,11 +56,19 @@ for (const button of panelButtons) {
   });
 }
 
-
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
     closeActivePanel();
   }
 });
 
+const skipLink = document.querySelector('.skip-link');
 
+skipLink.addEventListener('click', (event) => {
+  event.preventDefault();
+
+  const exploreButton = document.querySelector('[data-panel="explore-panel"]',
+
+  );
+  openPanel(exploreButton);
+});
