@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Rwanda Healthcare Access</title>
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@6.15.0/dist/maplibre-gl.css">
     <link rel="stylesheet" href="./css/style.css">
     <script type="module" src="./js/main.js"></script>
   </head>
@@ -25,7 +26,7 @@
         aria-controls="about-panel" aria-expanded="false" aria-label="About the data" title="About the data">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v.5"/></svg>
       </button>
-      <span class="rail-caption" aria-hidden="true">RWANDA</span>
+      <!-- <span class="rail-caption" aria-hidden="true">RWANDA</span> -->
     </nav>
 
     <main class="map-workspace">
@@ -34,14 +35,7 @@
         <h1>Rwanda Healthcare Access</h1>
       </header>
 
-      <!-- MapLibre will fill this container. Remove the placeholder then. -->
-      <div id="map" aria-label="Accessibility map area">
-        <div class="map-placeholder">
-          <span class="placeholder-symbol" aria-hidden="true">⌖</span>
-          <h2>Your map starts here</h2>
-          <p>The Rwanda basemap and accessibility hexagons will fill this space.</p>
-        </div>
-      </div>
+      <div id="map" aria-label="Accessibility map area"></div>
 
       <!-- Panels float above the map instead of taking up another column. -->
       <section id="explore-panel" class="floating-panel" aria-labelledby="panel-heading">
