@@ -1,6 +1,8 @@
 import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.15.0/dist/maplibre-gl.mjs';
 import { Protocol } from 'https://esm.sh/pmtiles@4.5.0';
 import { csvParse } from 'https://cdn.jsdelivr.net/npm/d3-dsv@3.0.1/+esm';
+import { cellToLatLng } from 'https://cdn.jsdelivr.net/npm/h3-js@4.3.0/+esm';
+
 const panelButtons = document.querySelectorAll('[data-panel]');
 const panels = document.querySelectorAll('.floating-panel');
 const closeButtons = document.querySelectorAll('.close-panel');
@@ -132,6 +134,7 @@ map.on('load', async () => {
 
   const facilitySelect = document.querySelector('#facility');
   const minimumTimeInput = document.querySelector('#minimum-time');
+  const resetButton = document.querySelector('#reset-filters');
 
   const travelTimeField = `travel_time_no_sites_${facilitySelect.value}`;
 
@@ -151,6 +154,17 @@ map.on('load', async () => {
       'fill-color': getTravelTimeColors(travelTimeField),
       'fill-opacity': 0.8,
       'fill-outline-color': 'rgba(255, 255, 255, 0.15)',
+    },
+  });
+  map.addLayer({
+    'id': 'selected-hexagon',
+    'type': 'line',
+    'source': 'rwanda',
+    'source-layer': 'rwanda_healthcare',
+    'filter': ['==', ['get', 'h3_index'], ''],
+    'paint': {
+      'line-color': '#9b174c',
+      'line-width': 3,
     },
   });
   const legendItems = [
@@ -211,6 +225,20 @@ map.on('load', async () => {
       document.querySelector('[data-panel="results-panel"]');
 
     openPanel(resultsButton);
+
+    map.setFilter('selected-hexagon', [
+      '==',
+      ['get', 'h3_index'],
+      row.h3_index,
+    ]);
+
+    const [latitude, longitude] = cellToLatLng(row.h3_index);
+
+    map.easeTo({
+      center: [longitude, latitude],
+      zoom: Math.max(map.getZoom(), 11),
+      duration: 700,
+    });
   }
 
   function renderResults(rows, field) {
@@ -273,6 +301,11 @@ map.on('load', async () => {
     }
 
     minimumTimeInput.removeAttribute('aria-invalid');
+    map.setFilter('selected-hexagon', [
+      '==',
+      ['get', 'h3_index'],
+      '',
+    ]);
     document.querySelector('#selected-area').textContent =
       'Select a hexagon to inspect its population and walking time.';
 
@@ -323,6 +356,21 @@ map.on('load', async () => {
       `Showing areas at least ${minimumMinutes} minutes from ${facilityLabel}. Uncertain values are excluded.`;
   }
 
+  function resetDashboard() {
+    facilitySelect.value = 'health_centers';
+    minimumTimeInput.value = '60';
+
+    updateMap();
+
+    map.easeTo({
+      center: [30.122091, -1.924965],
+      zoom: 8,
+      bearing: 0,
+      pitch: 0,
+      duration: 700,
+    });
+  }
+
   let healthcareRows;
 
   document.querySelector('#results-status').textContent =
@@ -366,9 +414,11 @@ map.on('load', async () => {
 
   facilitySelect.addEventListener('change', updateMap);
   minimumTimeInput.addEventListener('input', updateMap);
+  resetButton.addEventListener('click', resetDashboard);
 
   facilitySelect.disabled = false;
   minimumTimeInput.disabled = false;
+  resetButton.disabled = false;
 
   updateMap();
 });

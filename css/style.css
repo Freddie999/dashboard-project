@@ -294,17 +294,32 @@ input {
 .reset-button {
   width: 100%;
   min-height: 44px;
-  border: 1px solid var(--border);
+  border: 1px solid #176b52;
   border-radius: 6px;
-  color: var(--muted);
-  background: #f5f6f5;
-  font-size: 0.8rem;
+  background: #176b52;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-button:disabled,
-input:disabled,
-select:disabled {
+.reset-button:focus-visible {
+  outline: 3px solid #176b52;
+  outline-offset: 3px;
+}
+
+.reset-button:disabled {
+  background: #e4e7eb;
+  border-color: #c5cbd3;
+  color: #59616d;
   cursor: not-allowed;
+}
+
+.reset-button:hover:not(:disabled) {
+  background: #10513e;
+}
+
+.reset-button:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .map-placeholder {
