@@ -35,6 +35,5 @@
   "attributes_table": "rwanda-healthcare-values.csv",
   "attribution": "Fika / fikadigital.org; derived Rwanda subset",
   "source_url": "https://public-b2p-geodata.s3.us-east-1.amazonaws.com/general-pmtiles/all_countries_merged_hex8.pmtiles",
-  "licence_status": "Source reuse licence not established",
-  "notes": "data-notes.txt"
+  "licence_status": "Source reuse licence not established"
 }
