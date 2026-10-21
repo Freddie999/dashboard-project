@@ -62,18 +62,36 @@
         <p id="results-status" class="status-note" role="status">Filters will be available when data loads.</p>
 
         <section id="legend" class="panel-section" aria-labelledby="legend-heading">
-          <h3 id="legend-heading">Walking time</h3>
-          <p class="muted">The legend will appear when the accessibility layer is connected.</p>
+        <h3 id="legend-heading">Walking time to health centres</h3>
+
+        <ul id="legend-items" class="legend-items"></ul>
+
+        <p class="muted">
+            Modelled minutes · Source scenario: no_sites.
+            Bands are for exploration.
+        </p>
         </section>
-        <section class="panel-section" aria-labelledby="summary-heading">
-          <h3 id="summary-heading">Matching areas</h3>
-          <dl class="summary-values">
-            <div><dt>Hexagons</dt><dd id="matching-count">—</dd></div>
-            <div><dt>Estimated population</dt><dd id="matching-population">—</dd></div>
-          </dl>
-          <button id="reset-button" class="reset-button" type="button" disabled>Reset filters</button>
-        </section>
-      </section>
+    <section class="panel-section" aria-labelledby="summary-heading">
+        <h3 id="summary-heading">Matching areas</h3>
+
+        <dl class="summary-values">
+            <div>
+            <dt>Hexagons</dt>
+            <dd id="matching-count">—</dd>
+            </div>
+            <div>
+            <dt>Estimated population</dt>
+            <dd id="matching-population">—</dd>
+            </div>
+        </dl>
+
+        <p class="muted">
+            Totals cover all matching cells in the dataset, including those
+            outside the current map view.
+        </p>
+    </section>
+    </section>
+
 
       <section id="results-panel" class="floating-panel" aria-labelledby="details-heading" hidden>
         <div class="panel-header">
@@ -100,7 +118,6 @@
           <a href="./data/data-notes.txt">Read the data notes and limitations ↗</a>
         </section>
       </section>
-      <p class="map-status">Layout preview · Map and data not connected</p>
     </main>
   </body>
 </html>

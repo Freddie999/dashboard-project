@@ -360,6 +360,55 @@ select:disabled {
   transform: translateY(0);
 }
 
+.legend-items {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.legend-items li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+}
+
+.legend-swatch {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border: 1px solid #737b86;
+  border-radius: 3px;
+}
+
+.results-list {
+  padding-left: 24px;
+}
+
+.results-list li {
+  margin-bottom: 10px;
+}
+
+.result-button {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  text-align: left;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.result-button:hover {
+  background: #f5f6f5;
+}
+
+
 @media (width <= 640px) {
   :root {
     --rail-width: 56px;
