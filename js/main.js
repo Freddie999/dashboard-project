@@ -157,13 +157,24 @@ map.on('load', async () => {
     },
   });
   map.addLayer({
+    'id': 'selected-hexagon-halo',
+    'type': 'line',
+    'source': 'rwanda',
+    'source-layer': 'rwanda_healthcare',
+    'filter': ['==', ['get', 'h3_index'], ''],
+    'paint': {
+      'line-color': '#ffffff',
+      'line-width': 7,
+    },
+  });
+  map.addLayer({
     'id': 'selected-hexagon',
     'type': 'line',
     'source': 'rwanda',
     'source-layer': 'rwanda_healthcare',
     'filter': ['==', ['get', 'h3_index'], ''],
     'paint': {
-      'line-color': '#9b174c',
+      'line-color': '#24283f',
       'line-width': 3,
     },
   });
@@ -192,6 +203,13 @@ map.on('load', async () => {
     legendList.append(row);
   }
 
+  // Keep the dark outline and its white halo on the same cell.
+  function highlightArea(hexagonId) {
+    for (const layer of ['selected-hexagon-halo', 'selected-hexagon']) {
+      map.setFilter(layer, ['==', ['get', 'h3_index'], hexagonId]);
+    }
+  }
+
   function showAreaDetails(row) {
     const field = `travel_time_no_sites_${facilitySelect.value}`;
     const facilityLabel =
@@ -214,11 +232,32 @@ map.on('load', async () => {
     travelTime.textContent =
       `Modelled walking time to ${facilityLabel}: ${row[field]} minutes`;
 
+    const [latitude, longitude] = cellToLatLng(row.h3_index);
+
+    function centerSelectedArea() {
+      map.easeTo({
+        center: [longitude, latitude],
+        zoom: Math.max(map.getZoom(), 11),
+        duration: 700,
+      });
+    }
+
+    const viewMapButton = document.createElement('button');
+    viewMapButton.type = 'button';
+    viewMapButton.className = 'reset-button';
+    viewMapButton.textContent = 'View selected area on map';
+    viewMapButton.addEventListener('click', () => {
+      closePanels();
+      centerSelectedArea();
+      map.getCanvas().focus();
+    });
+
     container.replaceChildren(
       heading,
       identifier,
       population,
       travelTime,
+      viewMapButton,
     );
 
     const resultsButton =
@@ -226,19 +265,8 @@ map.on('load', async () => {
 
     openPanel(resultsButton);
 
-    map.setFilter('selected-hexagon', [
-      '==',
-      ['get', 'h3_index'],
-      row.h3_index,
-    ]);
-
-    const [latitude, longitude] = cellToLatLng(row.h3_index);
-
-    map.easeTo({
-      center: [longitude, latitude],
-      zoom: Math.max(map.getZoom(), 11),
-      duration: 700,
-    });
+    highlightArea(row.h3_index);
+    centerSelectedArea();
   }
 
   function renderResults(rows, field) {
@@ -255,38 +283,99 @@ map.on('load', async () => {
       return b.population - a.population;
     });
 
-    const topRows = sortedRows.slice(0, 10);
+    const pageSize = 10;
+    const pageCount = Math.ceil(sortedRows.length / pageSize);
+    let currentPage = 1;
     const numberFormatter = new Intl.NumberFormat('en-US');
 
     const description = document.createElement('p');
-    description.textContent =
-      `Showing ${topRows.length} of ${numberFormatter.format(rows.length)} matching areas, ordered by estimated population, largest first.`;
+    description.tabIndex = -1;
+
+    const pagination = document.createElement('nav');
+    pagination.className = 'results-pagination';
+    pagination.setAttribute('aria-label', 'Result pages');
+
+    const previousButton = document.createElement('button');
+    previousButton.type = 'button';
+    previousButton.textContent = 'Previous page';
+
+    const nextButton = document.createElement('button');
+    nextButton.type = 'button';
+    nextButton.textContent = 'Next page';
+
+    const pageForm = document.createElement('form');
+    pageForm.className = 'page-jump';
+    const pageLabel = document.createElement('label');
+    pageLabel.htmlFor = 'result-page';
+    pageLabel.textContent = `Page (1–${numberFormatter.format(pageCount)})`;
+    const pageInput = document.createElement('input');
+    pageInput.id = 'result-page';
+    pageInput.type = 'number';
+    pageInput.min = '1';
+    pageInput.max = String(pageCount);
+    pageInput.step = '1';
+    pageInput.required = true;
+    const goButton = document.createElement('button');
+    goButton.type = 'submit';
+    goButton.textContent = 'Go to page';
+    pageForm.append(pageLabel, pageInput, goButton);
+    pagination.append(previousButton, nextButton, pageForm);
 
     const list = document.createElement('ol');
     list.className = 'results-list';
 
-    for (const row of topRows) {
-      const item = document.createElement('li');
-      const button = document.createElement('button');
+    function showPage(page, moveFocus = false) {
+      currentPage = page;
+      const start = (page - 1) * pageSize;
+      const pageRows = sortedRows.slice(start, start + pageSize);
+      description.textContent =
+        `Page ${numberFormatter.format(page)} of ${numberFormatter.format(pageCount)}. Showing areas ${numberFormatter.format(start + 1)}–${numberFormatter.format(start + pageRows.length)} of ${numberFormatter.format(rows.length)}, ordered by estimated population, largest first.`;
+      previousButton.disabled = page === 1;
+      nextButton.disabled = page === pageCount;
+      pageInput.value = String(page);
+      list.start = start + 1;
+      list.replaceChildren();
 
-      button.type = 'button';
-      button.className = 'result-button';
-      button.textContent =
-        `${row.h3_index} — ${numberFormatter.format(row.population)} people; ${row[field]} minutes`;
+      for (const row of pageRows) {
+        const item = document.createElement('li');
+        const button = document.createElement('button');
 
-      button.addEventListener('click', () => {
-        if (minimumTimeInput.getAttribute('aria-invalid') === 'true') {
-          return;
-        }
+        button.type = 'button';
+        button.className = 'result-button';
+        button.textContent =
+          `${row.h3_index} — ${numberFormatter.format(row.population)} people; ${row[field]} minutes`;
 
-        showAreaDetails(row);
-      });
+        button.addEventListener('click', () => {
+          if (minimumTimeInput.getAttribute('aria-invalid') === 'true') {
+            return;
+          }
 
-      item.append(button);
-      list.append(item);
+          showAreaDetails(row);
+        });
+
+        item.append(button);
+        list.append(item);
+      }
+
+      // Announce the new range and keep focus out of removed result buttons.
+      if (moveFocus) {
+        description.focus();
+      }
     }
 
-    container.append(description, list);
+    previousButton.addEventListener('click', () => {
+      showPage(currentPage - 1, true);
+    });
+    nextButton.addEventListener('click', () => {
+      showPage(currentPage + 1, true);
+    });
+    pageForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      showPage(pageInput.valueAsNumber, true);
+    });
+
+    container.append(description, pagination, list);
+    showPage(1);
   }
 
   function updateMap() {
@@ -301,11 +390,7 @@ map.on('load', async () => {
     }
 
     minimumTimeInput.removeAttribute('aria-invalid');
-    map.setFilter('selected-hexagon', [
-      '==',
-      ['get', 'h3_index'],
-      '',
-    ]);
+    highlightArea('');
     document.querySelector('#selected-area').textContent =
       'Select a hexagon to inspect its population and walking time.';
 

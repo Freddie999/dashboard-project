@@ -17,10 +17,12 @@ I built this dashboard for my JavaScript for Planners course to explore access t
 1. Choose a healthcare facility type and enter a minimum walking time.
 2. Look at the matching areas on the map and their combined estimated population.
 3. Click a hexagon to see its population and modelled walking time.
-4. Open the results panel to compare up to 10 matching areas, sorted by largest estimated population. Selecting a result highlights it and moves the map to its location.
+4. Open the results panel to browse all matching areas, 10 per page, sorted by largest estimated population. Use **Previous page**, **Next page**, or enter a page number and choose **Go to page**. Selecting a result highlights it and moves the map to its location. **View selected area on map** closes the panel so you can see the highlighted hexagon, including on a phone.
 5. Use **Reset filters and map** to return to health centres, a 60-minute threshold, and the starting map view.
 
 The selected hexagon's details and the matching-results list share a panel. The list shows areas matching the filters across the dataset, not just areas near the one you clicked. The summary totals also include matching cells outside the current map view.
+
+You can use Tab to move between controls and Enter to select a result. Changing pages moves focus to the new result range. Escape closes a panel and returns focus to its navigation button. The selected hexagon has a dark outline with a white border to stand out against the map.
 
 ## Data and sources
 

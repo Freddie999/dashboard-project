@@ -399,7 +399,7 @@ input {
 }
 
 .results-list {
-  padding-left: 24px;
+  padding-left: 3.5em;
 }
 
 .results-list li {
@@ -421,6 +421,42 @@ input {
 
 .result-button:hover {
   background: #f5f6f5;
+}
+
+.results-pagination,
+.page-jump {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+}
+
+.page-jump,
+.page-jump label {
+  grid-column: 1 / -1;
+}
+
+.page-jump label {
+  font-size: 0.85rem;
+}
+
+.results-pagination button {
+  min-height: 44px;
+  padding: 8px;
+  border: 1px solid #646b80;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 0.85rem;
+}
+
+.results-pagination button:disabled {
+  background: #e4e7eb;
+  color: #59616d;
+  cursor: not-allowed;
+}
+
+.results-pagination button:hover:not(:disabled) {
+  background: #e9f1ed;
 }
 
 
